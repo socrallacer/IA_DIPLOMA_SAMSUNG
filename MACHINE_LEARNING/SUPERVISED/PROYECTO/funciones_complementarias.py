@@ -11,7 +11,7 @@ def drop_columns_threshold(df):
     missing_values = df.isnull().sum()
     missing_values = missing_values[missing_values > 0]
     missing_values = missing_values / df.shape[0]
-    missing_values = missing_values[missing_values > 50]
+    missing_values = missing_values[missing_values > 0.5]
     df = df.drop(missing_values.index, axis=1)
     return df
 
@@ -30,3 +30,9 @@ def missing_values_table(df):
               " columnas que tienen valores perdidos.")
         return mis_val_table_ren_columns
 
+#Función que me liste el P-Value de todas las variables con respecto a SalePrice
+def anova(df, column):
+    filtered_data = df.dropna(subset=[column])
+    groups = filtered_data.groupby(column)['SalePrice'].apply(list)
+    F, p = stats.f_oneway(*groups)
+    return p
